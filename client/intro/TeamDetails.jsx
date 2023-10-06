@@ -1,11 +1,11 @@
-import React from "react";
+import React from "react"
 
-import { Centered } from "meteor/empirica:core";
+import { Centered } from "meteor/empirica:core"
 // //// Avatar stuff //////
 // const names = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split(""); //for the players names (we will call them A, B, C etc)
-const names = ["Blue", "Green", "Pink", "Yellow"]; // for the players names to match avatar color
-const avatarNames = ["Colton", "Aaron", "Alex", "Tristan"]; // to do more go to https://jdenticon.com/#icon-D3
-const nameColor = ["#3D50B7", "#70A945", "#DE8AAB", "A59144"]; // similar to the color of the avatar
+const names = ["Blue", "Green", "Pink", "Yellow"] // for the players names to match avatar color
+const avatarNames = ["Colton", "Aaron", "Alex", "Tristan"] // to do more go to https://jdenticon.com/#icon-D3
+const nameColor = ["#3D50B7", "#70A945", "#DE8AAB", "A59144"] // similar to the color of the avatar
 
 export default class TeamDetails extends React.Component {
   renderPlayer(player, self = false) {
@@ -16,36 +16,36 @@ export default class TeamDetails extends React.Component {
         </span>
         {/* <span className="name" style={{ color: player.get("nameColor") }}> */}
         <span className="name" style={{ color: player.nameColor }}>
-          {player.name}
+          {player.get("role")}
           {self ? " (You)" : ""}
         </span>
       </div>
-    );
+    )
   }
 
   render() {
-    const { hasPrev, hasNext, onNext, onPrev, treatment } = this.props;
+    const { hasPrev, hasNext, onNext, onPrev, treatment } = this.props
     const player = {
       _id: 0,
       name: names[0],
       nameColor: nameColor[0],
-      avatar: `/avatars/jdenticon/${avatarNames[0]}`
-    };
+      avatar: `/avatars/Leader.png`,
+    }
 
     const otherPlayers = [
       {
         _id: 1,
         name: names[1],
         nameColor: nameColor[1],
-        avatar: `/avatars/jdenticon/${avatarNames[1]}`
+        avatar: `/avatars/Follower.png`,
       },
       {
         _id: 2,
         name: names[2],
         nameColor: nameColor[2],
-        avatar: `/avatars/jdenticon/${avatarNames[2]}`
-      }
-    ];
+        avatar: `/avatars/Follower.png`,
+      },
+    ]
     return (
       <Centered>
         <div className="instructions">
@@ -53,14 +53,40 @@ export default class TeamDetails extends React.Component {
           <p>
             In this game, you will{" "}
             <strong>
-              play together with {treatment.playerCount - 1} other participants
-              (your teammates)
+              play together with 2 other participants (your teammates)
             </strong>
-            . They are other MTurk workers who are undertaking the same study
-            simultaneously. Throughout all the tasks, the team will submit only
-            one answer, and therefore,{" "}
+            . They are other other students sitting near you. Throughout all the
+            tasks, the team will submit only one answer, and therefore,{" "}
             <strong>all members of the team will receive the same score</strong>
-            . To help you identify yourself and differentiate each other in the
+            .
+          </p>
+
+          <p>
+            <strong>
+              <u>
+                One member will be assigned as team LEADER, whose responsibility
+                is to manage the drag and drop function on behalf of the team
+              </u>
+              .
+            </strong>{" "}
+            Meanwhile, the other two members will be able to communicate and
+            advise the leader about what moves the team should make by verbal
+            communication or typing in the dialogue box in the simulation.
+          </p>
+          <p>
+            Another way for members to influence team decisions is to utilize
+            the mid-game suggestion function. At the halfpoint of each round,{" "}
+            <strong>
+              <u>
+                the game will pause for 1 minute where the two team members can
+                make independent suggestions
+              </u>
+            </strong>{" "}
+            about the team’s next moves.
+          </p>
+
+          <p>
+            To help you identify yourself and differentiate each other in the
             team, we will assign a color to you when the game starts (as shown
             in the following example).
           </p>
@@ -69,7 +95,7 @@ export default class TeamDetails extends React.Component {
             <div className="status">
               <div className="players bp3-card">
                 {this.renderPlayer(player, true)}
-                {otherPlayers.map(p => this.renderPlayer(p))}
+                {otherPlayers.map((p) => this.renderPlayer(p))}
               </div>
               <div className="total-score bp3-card">
                 <h6 className={"bp3-heading"}>Total Score</h6>
@@ -80,19 +106,6 @@ export default class TeamDetails extends React.Component {
           </div>
 
           <br />
-          <p>
-            Note that the game allows for simultaneous and real-time actions.
-            That means that you will be able to drag students to assign them to
-            rooms while your teammates are doing the same. However, when any
-            member in the team starts dragging a student, that student will be
-            locked (i.e., no one else can move it) until it is assigned to a
-            room.{" "}
-            <strong>
-              The student that is being moved will have the color of the
-              participant
-            </strong>
-            .
-          </p>
 
           <button
             type="button"
@@ -113,6 +126,6 @@ export default class TeamDetails extends React.Component {
           </button>
         </div>
       </Centered>
-    );
+    )
   }
 }

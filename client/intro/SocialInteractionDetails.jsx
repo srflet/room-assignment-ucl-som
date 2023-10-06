@@ -1,16 +1,16 @@
-import React from "react";
+import React from "react"
 
-import { Centered } from "meteor/empirica:core";
+import { Centered } from "meteor/empirica:core"
 // //// Avatar stuff //////
 // const names = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split(""); //for the players names (we will call them A, B, C etc)
-const names = ["Blue", "Green", "Pink", "Yellow"]; // for the players names to match avatar color
-const avatarNames = ["Colton", "Aaron", "Alex", "Tristan"]; // to do more go to https://jdenticon.com/#icon-D3
-const nameColor = ["#3D50B7", "#70A945", "#DE8AAB", "A59144"]; // similar to the color of the avatar
+const names = ["Blue", "Green", "Pink", "Yellow"] // for the players names to match avatar color
+const avatarNames = ["Colton", "Aaron", "Alex", "Tristan"] // to do more go to https://jdenticon.com/#icon-D3
+const nameColor = ["#3D50B7", "#70A945", "#DE8AAB", "A59144"] // similar to the color of the avatar
 
 export default class SocialInteractionDetails extends React.Component {
   state = {
-    satisfied: false
-  };
+    satisfied: false,
+  }
 
   renderPlayer(player, self = false) {
     return (
@@ -32,59 +32,75 @@ export default class SocialInteractionDetails extends React.Component {
         </span>
         {/* <span className="name" style={{ color: player.get("nameColor") }}> */}
         <span className="name" style={{ color: player.nameColor }}>
-          {player.name}
+          {player.get("role")}
           {self ? " (You)" : ""}
         </span>
       </div>
-    );
+    )
   }
 
   handleSatisfaction = (satisfied, event) => {
-    event.preventDefault();
-    this.setState({ satisfied: satisfied });
-  };
+    event.preventDefault()
+    this.setState({ satisfied: satisfied })
+  }
 
   render() {
-    const { hasPrev, hasNext, onNext, onPrev, treatment } = this.props;
+    const { hasPrev, hasNext, onNext, onPrev, treatment } = this.props
+
+    const imagePath =
+      treatment.playerCount > 1
+        ? "experiment/uiSuggestionExample.png"
+        : "experiment/indUIExample.svg"
+
+    console.log("imagePath", imagePath)
+
+    const leaderIcon = "/avatars/Leader.png"
+    const followerIcon = "/avatars/Follower.png"
+
     const player = {
       _id: 0,
       name: names[0],
       nameColor: nameColor[0],
-      avatar: `/avatars/jdenticon/${avatarNames[0]}`,
-      satisfied: this.state.satisfied
-    };
+      avatar: leaderIcon,
+      satisfied: this.state.satisfied,
+    }
 
     const otherPlayers = [
       {
         _id: 1,
         name: names[1],
         nameColor: nameColor[1],
-        avatar: `/avatars/jdenticon/${avatarNames[1]}`,
-        satisfied: false
+        avatar: followerIcon,
+        satisfied: false,
       },
       {
         _id: 2,
         name: names[2],
         nameColor: nameColor[2],
-        avatar: `/avatars/jdenticon/${avatarNames[2]}`,
-        satisfied: true
-      }
-    ];
+        avatar: followerIcon,
+        satisfied: true,
+      },
+    ]
     return (
       <Centered>
         <div className="instructions">
-          <h1 className={"bp3-heading"}> Event Logs and In-Game Chat</h1>
+          <h1 className={"bp3-heading"}> Game Interface</h1>
           <p>
-            We will log every action taken by you or any of your teammates, and
-            this log will be shown to you to help you keep track of all the
-            actions that have taken place so far.
+            We are almost there! please take a second to familiarize yourself
+            with the game User Interface shown here:
           </p>
 
+          <div className="image">
+            <img
+              class="image-social"
+              src={imagePath}
+              style={{ border: "2px solid" }}
+            />
+          </div>
+
           <p>
-            Also, you may communicate with your teammates through the in-game
-            chat. This chat room is public so whatever you write will appear to
-            the other {treatment.playerCount - 1} teammates. You can use this in
-            anyway you want.
+            You can communicate with your teammates through the in-game chat.
+            This chat room will appear on the right hand side of the screen.
           </p>
 
           <p>
@@ -93,18 +109,34 @@ export default class SocialInteractionDetails extends React.Component {
             find a room assignment plan. You will automatically{" "}
             <strong>progress to the next task when the time is up</strong>.
           </p>
+
           <p>
-            However, you can always indicate whether you are satisfied with the
-            answer before the timer is up (indicated by the check mark on the
-            avatar). Click on the "Satisfied" button in the following example
-            and see what happens!
+            At the midpoint of each round, we will pause the game for 1 min, and
+            a suggestion box will apear on the right side of the screen for the
+            players not assigned as the leader. If you are not the leader,
+            please use the box to submit suggested moves for the leader to make.{" "}
+            <strong>
+              <u>
+                During this pause, the leader cannot make moves while waiting
+                for the two members to propose suggestions
+              </u>
+            </strong>
+            . After the pause, the team will see the suggestions from the two
+            members, and can decide what moves to make.
+          </p>
+
+          <p>
+            You can always indicate whether you are satisfied with the answer
+            before the timer is up (indicated by the check mark on the avatar).
+            Click on the "Satisfied" button in the following example and see
+            what happens!
           </p>
 
           <div className="social-interactions" style={{ margin: "auto" }}>
             <div className="status">
               <div className="players bp3-card">
                 {this.renderPlayer(player, true)}
-                {otherPlayers.map(p => this.renderPlayer(p))}
+                {otherPlayers.map((p) => this.renderPlayer(p))}
               </div>
               <div className="total-score bp3-card">
                 <h6 className={"bp3-heading"}>Total Score</h6>
@@ -143,11 +175,20 @@ export default class SocialInteractionDetails extends React.Component {
             <strong>
               If all team members are satisfied with the answer before the timer
               is up, the answer will be submitted and your team will proceed to
-              the next task. If the "Satisfied" button is unclickable (i.e.,
-              inactive) for you for more than 10 seconds, try to refresh the
-              page.
+              the next task.
             </strong>
             .
+          </p>
+
+          <p>
+            If the "Satisfied" button for in is unclickable (i.e., inactive) for
+            more than 10 seconds, try to refresh the page. Otherwise, you will
+            have wait for the time run out. This will not effect your bonus.
+          </p>
+
+          <p>
+            Now you know where everything goes and ready to take the quiz! Good
+            luck.
           </p>
 
           <button
@@ -169,6 +210,6 @@ export default class SocialInteractionDetails extends React.Component {
           </button>
         </div>
       </Centered>
-    );
+    )
   }
 }

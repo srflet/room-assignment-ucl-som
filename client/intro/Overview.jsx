@@ -14,7 +14,7 @@ export default class Overview extends React.Component {
           <p>
             In this game, you will be{" "}
             <strong>
-              asked to solve a sequence of {treatment.nRounds} resource
+              asked to solve a sequence of resource
               allocation tasks
             </strong>
             . In each task, you are going to{" "}

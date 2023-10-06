@@ -6,7 +6,7 @@ export default class UIOverview extends React.Component {
     const { hasPrev, hasNext, onNext, onPrev, treatment } = this.props;
     const imagePath =
       treatment.playerCount > 1
-        ? "experiment/groupUIExample.svg"
+        ? "experiment/uiSuggestions.png"
         : "experiment/indUIExample.svg";
 
     console.log("imagePath", imagePath);

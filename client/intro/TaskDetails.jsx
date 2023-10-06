@@ -62,7 +62,7 @@ export default class TaskDetails extends React.Component {
           </p>
 
           <p>
-            You are provided with a handy <strong>drag and drop</strong> tool to
+            Your teams is provided with a handy <strong>drag and drop</strong> tool to
             solve the problem. To assign a student into a room, drag the icon of
             that student and drop it into the room. Try this example:
           </p>

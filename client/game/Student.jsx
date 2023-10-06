@@ -1,81 +1,156 @@
-import React from "react";
-import { TimeSync } from "meteor/mizzao:timesync";
-import moment from "moment";
+import React from "react"
+import { TimeSync } from "meteor/mizzao:timesync"
+import moment from "moment"
 
 export default class Student extends React.Component {
+  // componentDidMount() {
+  //   const { player } = this.props
+  //   console.log(player)
+  // }
+
+  state = {
+    draggable: true,
+  }
   handleDragStart = (e) => {
-    console.log('timeSync',moment(TimeSync.serverTime(null, 1000)))
-    const { student, stage, player } = this.props;
-    const dragger = stage.get(`student-${student}-dragger`); //check if there is already a dragger
-    //if so, you can't move it, already someone is moving it!
-    if (dragger) {
-      // Can't drag
-      console.log("dragger");
-      e.preventDefault();
-      return;
+    console.log("timeSync", moment(TimeSync.serverTime(null, 1000)))
+    const { student, stage, player, isSolo } = this.props
+    const paused = stage.get("paused")
+    const hasPaused = stage.get("hasPaused")
+    const groupTag = player.get("groupIdTag")
+
+    if (!isSolo && player.get("role") === "Follower") {
+      console.log("Failed Drag")
+      return false
     }
-    stage.set(`student-${student}-dragger`, player._id);
-    stage.append("log", {
-      verb: "draggingStudent",
-      subjectId: player._id,
-      object: student,
-      // at: new Date()
-      at: moment(TimeSync.serverTime(null, 1000)),
-      
-    });
-    e.dataTransfer.setData("text/plain", student);
-    console.log('student moment', moment(TimeSync.serverTime(null, 1000)))
-  };
+
+    if (paused) {
+      console.log("Failed Drag")
+
+      return false
+    }
+
+    // if (!hasPaused) {
+    //   return false
+    // }
+
+    // const dragger = isSolo
+    //   ? player.stage.get(`student-${student}-dragger`)
+    //   : stage.get(`${groupTag}-student-${student}-dragger`) //check if there is already a dragger
+    // //if so, you can't move it, already someone is moving it!
+    // if (dragger) {
+    //   // Can't drag
+    //   console.log("dragger")
+    //   e.preventDefault()
+    //   return
+    // }
+
+    // if (isSolo) {
+    //   player.stage.set(`student-${student}-dragger`, player._id)
+    //   player.stage.append("log", {
+    //     verb: "draggingStudent",
+    //     subjectId: player._id,
+    //     object: student,
+    //     // at: new Date()
+    //     at: moment(TimeSync.serverTime(null, 1000)),
+    //   })
+    // } else {
+    //   if (player.get("role") === "Leader" && !paused) {
+    //     stage.set(`${groupTag}-student-${student}-dragger`, player._id)
+    //     stage.append(`${groupTag}-log`, {
+    //       verb: "draggingStudent",
+    //       subjectId: player._id,
+    //       object: student,
+    //       // at: new Date()
+    //       at: moment(TimeSync.serverTime(null, 1000)),
+    //     })
+    //   }
+    // }
+    e.dataTransfer.setData("text/plain", student)
+    console.log(student)
+    console.log(e.dataTransfer.getData("text/plain"))
+    console.log("student moment", moment(TimeSync.serverTime(null, 1000)))
+  }
 
   handleDragOver = (e) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   handleDragLeave = (e) => {
-    e.preventDefault();
-    console.log("released!");
-    const { student, stage } = this.props;
-    stage.set(`student-${student}-dragger`, null);
-  };
+    e.preventDefault()
+    console.log("released!")
+    const { student, stage, isSolo, player } = this.props
+    const groupTag = player.get("groupIdTag")
+    // {
+    //   isSolo
+    //     ? player.stage.set(`student-${student}-dragger`, null)
+    //     : stage.set(`${groupTag}-student-${student}-dragger`, null)
+    // }
+  }
 
   handleDragEnd = (e) => {
-    e.preventDefault();
-    const { student, stage, player } = this.props;
-    stage.set(`student-${student}-dragger`, null);
+    e.preventDefault()
+    console.log("dragEnd")
+    const { student, stage, player, isSolo } = this.props
+    const groupTag = player.get("groupIdTag")
+    // {
+    //   isSolo
+    //     ? player.stage.set(`student-${student}-dragger`, null)
+    //     : stage.set(`${groupTag}-student-${student}-dragger`, null)
+    // }
+
+    const paused = stage.get("paused")
 
     //if dropped into non-allowed area
-    if (e.dataTransfer.dropEffect === "none") {
-      stage.append("log", {
-        verb: "releasedStudent",
-        subjectId: player._id,
-        object: student,
-      });
-    }
-  };
+    // if (e.dataTransfer.dropEffect === "none") {
+    //   if (isSolo) {
+    //     player.stage.append("log", {
+    //       verb: "releasedStudent",
+    //       subjectId: player._id,
+    //       object: student,
+    //     })
+    //   } else {
+    //     if (player.get("role") === "Leader" && !paused) {
+    //       stage.append(`${groupTag}-log`, {
+    //         verb: "releasedStudent",
+    //         subjectId: player._id,
+    //         object: student,
+    //       })
+    //     }
+    //   }
+    // }
+  }
+
+  // handleMouseEnter = (e) => {
+  //   e.preventDefault()
+  //   const { player, isSolo } = this.props
+  //   if (!isSolo && player.get("role") === "Follower") {
+  //     this.setState({ draggable: false })
+  //   }
+  // }
 
   render() {
-    const { student, stage, game, player } = this.props;
-    this.isDragabble = true; // usually everyone can drag, except if it is colored (i.e., being dragged by someone else)
-    const dragger = stage.get(`student-${student}-dragger`);
-    const style = {};
-    const cursorStyle = { cursor: null };
-    if (dragger) {
-      const playerDragging = game.players.find((p) => p._id === dragger);
-      if (playerDragging) {
-        style.fill = playerDragging.get("nameColor");
-        this.isDragabble = playerDragging === player._id; //only one can drag at a time
-      }
-    } else {
-      //if the student is NOT being dragged by anyone, then the cursor will be changed
-      cursorStyle.cursor = "move";
-    }
+    const { student, stage, game, player, isSolo } = this.props
+    const groupTag = player.get("groupIdTag")
+    this.isDragabble = true // usually everyone can drag, except if it is colored (i.e., being dragged by someone else)
+    // const dragger = isSolo
+    //   ? player.stage.get(`student-${student}-dragger`)
+    //   : stage.get(`${groupTag}-student-${student}-dragger`)
+    const style = {}
+    const cursorStyle = { cursor: null }
 
+    //if the student is NOT being dragged by anyone, then the cursor will be changed
+    cursorStyle.cursor = "move"
+
+    // if (!isSolo) {
+    //   this.isDragabble = this.state.draggable
+    // }
     return (
       <div
         draggable={this.isDragabble}
         onDragStart={this.handleDragStart}
         onDragOver={this.handleDragOver}
         onDragEnd={this.handleDragEnd}
+        // onMouseEnter={this.handleMouseEnter}
         //onDragExit={this.handleDragLeave}
         className="student"
         style={cursorStyle}
@@ -91,6 +166,6 @@ export default class Student extends React.Component {
         </span>
         <span className="letter">{student}</span>
       </div>
-    );
+    )
   }
 }
